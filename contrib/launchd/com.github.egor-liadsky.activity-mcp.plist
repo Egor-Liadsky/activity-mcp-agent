@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  LaunchAgent демона activity-mcp: запуск при входе в систему и перезапуск
+  после падения. Перед установкой замените ПУТЬ_К_БИНАРНИКУ, КАТАЛОГ_ПРОЕКТОВ
+  и ДОМАШНИЙ_КАТАЛОГ (launchd не раскрывает ~ и переменные окружения).
+
+  Установка:
+    cp com.github.egor-liadsky.activity-mcp.plist ~/Library/LaunchAgents/
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.github.egor-liadsky.activity-mcp.plist
+  Остановка и удаление:
+    launchctl bootout gui/$(id -u)/com.github.egor-liadsky.activity-mcp
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.github.egor-liadsky.activity-mcp</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>ПУТЬ_К_БИНАРНИКУ/activity-mcp</string>
+        <string>--root</string>
+        <string>КАТАЛОГ_ПРОЕКТОВ</string>
+        <string>--schedule</string>
+        <string>0 9,18 * * *</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <!-- Не чаще раза в 30 с: при ошибке конфигурации демон не крутится в цикле. -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+    <!-- Демону нужен git из PATH. -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+    <key>StandardErrorPath</key>
+    <string>ДОМАШНИЙ_КАТАЛОГ/Library/Logs/activity-mcp.log</string>
+    <key>StandardOutPath</key>
+    <string>ДОМАШНИЙ_КАТАЛОГ/Library/Logs/activity-mcp.log</string>
+</dict>
+</plist>

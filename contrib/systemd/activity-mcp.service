@@ -1,0 +1,22 @@
+# Пользовательский unit systemd для демона activity-mcp.
+#
+# Установка:
+#   mkdir -p ~/.config/systemd/user
+#   cp activity-mcp.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now activity-mcp
+# Чтобы демон работал и без открытой сессии:
+#   loginctl enable-linger $USER
+# Журнал: journalctl --user -u activity-mcp -f
+
+[Unit]
+Description=activity-mcp: activity digests of git projects
+After=default.target
+
+[Service]
+ExecStart=%h/.cargo/bin/activity-mcp --root %h/projects --schedule "0 9,18 * * *"
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
