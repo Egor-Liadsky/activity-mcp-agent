@@ -71,7 +71,10 @@ async fn main() -> anyhow::Result<()> {
     // launchd и systemd сами перенаправляют stderr в файл.
     tracing_subscriber::fmt()
         .with_env_filter(
-            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info".into()),
+            // `rmcp` пишет INFO на каждое подключение, а клиенты подключаются
+            // на каждую операцию и опрос: журнал круглосуточного демона
+            // утонул бы в них.
+            tracing_subscriber::EnvFilter::try_from_default_env().unwrap_or_else(|_| "info,rmcp=warn".into()),
         )
         .with_writer(std::io::stderr)
         .with_ansi(false)

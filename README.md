@@ -99,7 +99,7 @@ activity-mcp --root ~/projects
 
 Длительности — `90s`, `15m`, `6h`, `7d`, `2w`. Каталоги сборки и
 зависимостей (`target`, `node_modules`, `build`, `dist`, `.venv` и др.) не
-обходятся и не будят опрос. Журнал — в stderr, уровень — `RUST_LOG`.
+обходятся и не будят опрос. Журнал — в stderr, уровень — `RUST_LOG` (по умолчанию `info,rmcp=warn`: без записи на каждое подключение клиента).
 
 Маршруты:
 
@@ -157,10 +157,16 @@ Linux — пользовательский unit `contrib/systemd/activity-mcp.se
 
 ## Подключение к клиентам
 
-`agentcli` (сводки в TUI по `Ctrl+A`, команды `agentcli activity …`):
+`agentcli` (сводки в TUI по `Ctrl+A`, команды `agentcli activity …`) умеет
+и сам запустить демон: `Ctrl+P` → «Сводки активности» → «Демон», `Enter`,
+или `agentcli activity start`. Он пишет тот же LaunchAgent (метка
+`com.github.egor-liadsky.activity-mcp`) или unit `activity-mcp.service` с
+каталогом и расписанием из своего конфига и регистрирует его; ручная
+установка из `contrib/` при этом не нужна.
 
 ```bash
-agentcli config activity set on
+agentcli config activity set on --root ~/projects
+agentcli activity start                          # launchd / systemd --user
 agentcli config activity set --chat-tools true   # инструменты activity_* модели
 ```
 
